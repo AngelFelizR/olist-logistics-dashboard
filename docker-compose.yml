@@ -1,0 +1,10 @@
+services:
+  olist-project:
+    build:
+      context: .
+    image: angelfelizr/olist-project:0.0.1
+    container_name: olist-project
+    ports:
+      - "2225:22"
+    volumes:
+      - .:/root/olist-logistics-dashboard

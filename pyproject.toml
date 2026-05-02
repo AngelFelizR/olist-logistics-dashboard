@@ -1,0 +1,23 @@
+[project]
+name = "OlistProject"
+version = "0.0.1"
+description = "Exploring Olist Data"
+authors = [{name = "Angel Feliz", email = "angel.esteban.feliz@gmail.com"}]
+dependencies = [
+    "pandas>=2.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",       # Equivalente a testthat
+    "pytest-cov",        # Cobertura de tests
+    "black"             # Formateador (como air en R)
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]  # Indica que el código vive en src/
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "--cov=OlistProject --cov-report=term-missing"
