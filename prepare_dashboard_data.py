@@ -30,6 +30,11 @@ orders = pd.read_csv(
     engine="pyarrow",
     dtype_backend="pyarrow"
 )
+order_products = pd.read_csv(
+    RAW_DATA / "olist_products_dataset.csv",
+    engine="pyarrow",
+    dtype_backend="pyarrow"
+)
 order_items = pd.read_csv(
     RAW_DATA / "olist_order_items_dataset.csv",
     engine="pyarrow",
@@ -57,6 +62,23 @@ geolocation = pd.read_csv(
 )
 
 # ------------------------------------------------------------------------------
+# 4. PREPARAR ITEMS POR PEDIDO Y VENDEROR
+# ------------------------------------------------------------------------------
+items_per_vendor = (
+    order_items
+    .merge(order_products[["product_id", "product_category_name"]],
+           how="left",
+           on="product_id")
+    .groupby(["order_id", "seller_id"], as_index=False)
+    .agg(
+        total_price=("price", "sum"),
+        total_freight=("freight_value", "sum"),
+        min_shipping_date = ("shipping_limit_date", "min")
+    )
+    .merge(sellers, how="left", on='seller_id')    
+)
+
+# ------------------------------------------------------------------------------
 # 3. CREAR GEOLOCALIZACIÓN POR CIUDAD (lat/lng promedio)
 # ------------------------------------------------------------------------------
 city_geo = (
@@ -67,20 +89,7 @@ city_geo = (
     .agg("mean")
 )
 
-# ------------------------------------------------------------------------------
-# 4. PREPARAR ITEMS POR PEDIDO Y VENDEROR
-# ------------------------------------------------------------------------------
-items_per_vendor = (
-    order_items
-    .groupby(["order_id", "seller_id"], as_index=False)
-    .agg(
-        total_price=("price", "sum"),
-        total_freight=("freight_value", "sum"),
-        min_shipping_date = ("shipping_limit_date", "min")
-    )
-    .merge(sellers, how="left", on='seller_id')
-    
-)
+
 
 # ------------------------------------------------------------------------------
 # 5. UNIFICAR DATOS PRINCIPALES
