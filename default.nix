@@ -2,6 +2,26 @@ let
   # Import a specific version of nixpkgs (frozen for reproducibility)
   pkgs = import (fetchTarball "https://github.com/rstats-on-nix/nixpkgs/archive/2026-04-22.tar.gz") {};
 
+  # To Render PDF
+  tex = (pkgs.texlive.combine {
+    inherit (pkgs.texlive)
+      collection-fontsextra
+      csquotes
+      fancyhdr
+      fontawesome5
+      fontspec
+      makecell
+      orcidlink
+      pdfcol
+      pdflscape
+      scheme-medium
+      tcolorbox
+      threeparttable
+      threeparttablex
+      tikzfill
+      titling;
+  });
+
   # Python packages to be included in the environment
   pyconf = builtins.attrValues {
     inherit (pkgs.python313Packages)
@@ -12,21 +32,9 @@ let
       pandas        # Pandas with Arrow backend support
       pyarrow       # High-performance backend for Pandas
       numpy
+      openpyxl      # Writing excel files
       # Visualization
-      plotnine      # Grammar of Graphics (ggplot2 style for Python)
-      # Scientific computing
-      scipy
-      # NLP
-      spacy
-      unidecode     # Para normalizar caracteres brasileños
-      tqdm          # Para monitorear el progreso en reviews largas
-      # Machine Learning
-      scikit-learn
-      # Package development and testing
-      pytest
-      pytest-cov
-      black         # Code formatter
-      quartodoc;    # Documentation generator
+      plotnine;      # Grammar of Graphics (ggplot2 style for Python)
   };
 
   # System-level packages (non-Python)
@@ -34,24 +42,27 @@ let
     inherit (pkgs)
       glibcLocales
       nix
-      python313
-      uv            # Fast Python package installer and resolver
       quarto
+      which
+      python313
       fontconfig
       dejavu_fonts    # Standard fonts
       freefont_ttf    # Additional fonts for better rendering
-      liberation_ttf; # Metric-compatible fonts (Arial/Times)
+      liberation_ttf # Metric-compatible fonts (Arial/Times)
+      fira;
   };
 
   # Define the development shell
   shell = pkgs.mkShell {
+
     # Locale configuration for consistent behavior
-    LOCALE_ARCHIVE = if pkgs.system == "x86_64-linux" 
-      then "${pkgs.glibcLocales}/lib/locale/locale-archive" 
-      else "";
-    
+    LOCALE_ARCHIVE = if pkgs.system == "x86_64-linux" then "${pkgs.glibcLocales}/lib/locale/locale-archive" else "";
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
 
     # Fontconfig setup so Matplotlib can find fonts installed by Nix
     FONTCONFIG_FILE = "${pkgs.fontconfig.out}/etc/fonts/fonts.conf";
@@ -64,19 +75,10 @@ let
       # 2. Add source directory to PYTHONPATH for immediate development
       #    This allows `import OlistProject` without installation
       export PYTHONPATH=$PWD/src:$PYTHONPATH
-
-      # 3. Install package in editable mode using uv (recommended for real development)
-      #    --system is required because we are inside a Nix environment (no venv)
-      echo "→ Installing OlistProject in editable mode (--system)..."
-      uv pip install -e . --system --reinstall --quiet || true
-      echo "✅ OlistProject package installed in editable mode"
-
-      # Languague model
-      uv pip install https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-3.8.0/pt_core_news_sm-3.8.0-py3-none-any.whl --system --quiet || true
     '';
 
     # All packages that will be available inside the shell
-    buildInputs = [ pyconf system_packages ];
+    buildInputs = [ tex pyconf system_packages ];
   };
 in
   {

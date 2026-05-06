@@ -1,9 +1,9 @@
 services:
-  olist-project:
+  olist-dashboard:
     build:
       context: .
-    image: angelfelizr/olist-project:0.0.1
-    container_name: olist-project
+    image: angelfelizr/olist-dashboard:0.0.1
+    container_name: olist-dashboard
     ports:
       - "2225:22"
     volumes:

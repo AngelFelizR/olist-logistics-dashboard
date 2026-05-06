@@ -9,7 +9,7 @@ docker compose up -d
 
 # 3. Wait a moment for SSH to be ready and inject the public SSH key
 # We use a pipe to avoid creating temporary files inside the container
-cat ~/.ssh/id_rsa.pub | docker compose exec -T olist-project bash -c "cat >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys"
+cat ~/.ssh/id_rsa.pub | docker compose exec -T olist-dashboard bash -c "cat >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys"
 
 echo "-------------------------------------------------------"
 echo "✅ OlistProject environment successfully deployed!"
