@@ -49,7 +49,7 @@ The script `prepare_dashboard_data.py` performs the following steps:
 2. Enriches products with derived attributes (volume, category grouping).
 3. Aggregates orders to a single row per order, merging customer, seller, and review data.
 4. Computes logistic indicators: delay days, handling/transit times, cancellation cost, margin.
-5. Exports the final table `orders_processed.xlsx` (99,441 rows × 37 columns) that feeds the dashboard.
+5. Exports the final table `orders_processed.xlsx` (99,420 rows × 38 columns) that feeds the dashboard.
 
 ## 🚀 Getting Started
 
