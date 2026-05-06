@@ -105,7 +105,7 @@ quarto render angel-feliz-visializacion-de-datos-final.qmd --to pdf
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details (if included).
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgements
 
